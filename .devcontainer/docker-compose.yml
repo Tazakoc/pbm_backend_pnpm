@@ -1,0 +1,67 @@
+version: '3.8'
+
+services:
+  pbm_db:
+    image: postgres:latest
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U pbm']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      POSTGRES_USER: pbm
+      POSTGRES_PASSWORD: pbm
+      POSTGRES_DB: pbm
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - pbm_network
+
+  authentication:
+    build:
+      context: ../../authentication
+      dockerfile: Dockerfile
+    volumes:
+      - ../../authentication:/workspaces/authentication
+      - /workspaces/authentication/node_modules
+    ports:
+      - '5000:5000'
+    restart: always
+    environment:
+      - DATABASE_URL=postgresql://pbm:pbm@pbm_db:5432/pbm
+      - REDIS_HOST=pbm_redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=721412
+    depends_on:
+      pbm_db:
+        condition: service_healthy
+      pbm_redis:
+        condition: service_healthy
+    networks:
+      - pbm_network
+
+  pbm_redis:
+    image: redis:latest
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+    ports:
+      - '6379:6379'
+    volumes:
+      - ../src/config/redis.conf:/usr/local/etc/redis/redis.conf
+    command: ['redis-server', '/usr/local/etc/redis/redis.conf']
+    networks:
+      - pbm_network
+
+volumes:
+  postgres-data:
+
+networks:
+  pbm_network:
+    driver: bridge

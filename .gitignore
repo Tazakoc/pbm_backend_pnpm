@@ -1,0 +1,21 @@
+# Dependencies
+node_modules
+
+# Environment varibales
+.env*
+!.env*.example
+
+# misc
+.DS_Store
+
+# Dev db data
+db
+
+# TypeScript
+build
+
+# Pnpm store
+.pnpm-store
+
+# logs
+logs

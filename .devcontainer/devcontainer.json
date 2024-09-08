@@ -1,0 +1,45 @@
+{
+  "name": "Personal Budget Tracker",
+
+  // Use 'dockerComposeFile' to specify the compose file path relative to the .devcontainer folder.
+  "dockerComposeFile": "docker-compose.yml",
+
+  // Use 'service' to specify the service name in the docker-compose file.
+  "service": "authentication",
+
+  //  Use 'workspaceFolder' to specify the path of the workspace folder inside the container.
+  "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+
+  // Use 'shutdownAction' to specify the action to take when the container is stopped.
+  "shutdownAction": "stopCompose",
+
+  // Use 'postCreateCommand' to run commands after the container is created.
+  //"postCreateCommand": "echo 'Environment setup complete!'",
+
+  // Uncomment to connect as a non-root user. See https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "root",
+
+  // Use 'forwardPorts' to make a list of ports inside the container available locally.
+  "forwardPorts": [5000],
+
+  // Use 'runServices' to specify the services to run in the container.
+  "runServices": [
+    "pbm_db"
+  ],
+
+    // Use customizations to add extensions on vscode inside the container
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "dbaeumer.vscode-eslint",
+          "Prisma.prisma",
+          "Postman.postman-for-vscode",
+          "ms-vscode.vscode-typescript-next",
+          "YoavBls.pretty-ts-errors",
+          "esbenp.prettier-vscode",
+          "rvest.vs-code-prettier-eslint",
+          "ms-azuretools.vscode-docker"
+        ]
+      }
+    }
+}

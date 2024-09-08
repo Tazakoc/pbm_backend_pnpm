@@ -1,0 +1,159 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// USERS
+model User {
+  id              String    @id @default(uuid())
+  username        String    @unique(map: "username_unique") @db.VarChar
+  name            String    @db.VarChar
+  password        String    @db.VarChar
+  avatar          String?   @db.VarChar
+  city            String    @db.VarChar
+  country         String    @db.VarChar
+  email           String    @unique(map: "email_unique") @db.VarChar
+  isEmailVerified Boolean   @default(false)
+  blacklisted     Boolean   @default(false)
+  lastName        String    @db.VarChar
+  phone           String    @unique(map: "phone_unique") @db.VarChar
+  state           String    @db.VarChar
+  role            Role      @default(USER)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime?
+  deletedAt       DateTime?
+
+  // RELATIONSHIPS
+  tracking Tracking[]
+  incomes  Incomes[]
+  expenses Expenses[]
+  savings  Savings[]
+
+  // INDEXES
+  @@index([username])
+  // MAP
+  @@map(name: "users")
+}
+
+model Audit {
+  id        Int       @id @default(autoincrement())
+  username  String?   @db.VarChar
+  log_date  DateTime? @db.Timestamp(6)
+  operation String?   @db.VarChar(50)
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+// TRACKING
+model Tracking {
+  id            Int      @id @default(autoincrement())
+  date          DateTime @db.Timestamp(6)
+  user          String   @db.VarChar
+  type          String   @db.VarChar
+  category      String   @db.VarChar
+  amount        Int      @db.Integer
+  details       String   @db.VarChar
+  effectiveDate DateTime @db.Timestamp(6)
+  updatedAt     DateTime @default(now()) @db.Timestamp(6)
+  users         User     @relation(fields: [user], references: [username])
+
+  // Indexes
+  @@index([user])
+  // Map
+  @@map("tracking")
+}
+
+// INCOMES
+model Incomes {
+  id      Int      @id @default(autoincrement())
+  date    DateTime @default(now())
+  incomes String   @db.VarChar
+  jan     Int      @db.Integer
+  feb     Int      @db.Integer
+  mar     Int      @db.Integer
+  apr     Int      @db.Integer
+  may     Int      @db.Integer
+  jun     Int      @db.Integer
+  jul     Int      @db.Integer
+  aug     Int      @db.Integer
+  sep     Int      @db.Integer
+  oct     Int      @db.Integer
+  nov     Int      @db.Integer
+  dec     Int      @db.Integer
+  year    Int      @db.Integer
+  user    String   @db.VarChar
+  users   User     @relation(fields: [user], references: [username])
+
+  // Indexes
+  @@index([user])
+  // Map
+  @@map(name: "incomes")
+}
+
+// EXPENSES
+model Expenses {
+  id       Int      @id @default(autoincrement())
+  date     DateTime @default(now())
+  expenses String   @db.VarChar
+  jan      Int      @db.Integer
+  feb      Int      @db.Integer
+  mar      Int      @db.Integer
+  apr      Int      @db.Integer
+  may      Int      @db.Integer
+  jun      Int      @db.Integer
+  jul      Int      @db.Integer
+  aug      Int      @db.Integer
+  sep      Int      @db.Integer
+  oct      Int      @db.Integer
+  nov      Int      @db.Integer
+  dec      Int      @db.Integer
+  year     Int      @db.Integer
+  user     String   @db.VarChar
+  users    User     @relation(fields: [user], references: [username])
+
+  // Indexes
+  @@index([user])
+  // Map
+  @@map(name: "expenses")
+}
+
+// SAVINGS
+model Savings {
+  id      Int      @id @default(autoincrement())
+  date    DateTime @default(now())
+  savings String   @db.VarChar
+  jan     Int      @db.Integer
+  feb     Int      @db.Integer
+  mar     Int      @db.Integer
+  apr     Int      @db.Integer
+  may     Int      @db.Integer
+  jun     Int      @db.Integer
+  jul     Int      @db.Integer
+  aug     Int      @db.Integer
+  sep     Int      @db.Integer
+  oct     Int      @db.Integer
+  nov     Int      @db.Integer
+  dec     Int      @db.Integer
+  year    Int      @db.Integer
+  user    String   @db.VarChar
+  users   User     @relation(fields: [user], references: [username])
+
+  // Indexes
+  @@index([user])
+  // Map
+  @@map(name: "savings")
+}
